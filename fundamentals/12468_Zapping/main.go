@@ -26,3 +26,7 @@ func main() {
 		_, err = fmt.Scan(&a, &b)
 	}
 }
+
+//for cmd: go run main.go < 12468.in > 12468.out
+// for powershell: type .\12468.in | go run main.go > 12468.out
+//refer to https://www.udebug.com/ to verify inputs
