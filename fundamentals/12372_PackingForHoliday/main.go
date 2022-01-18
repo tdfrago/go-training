@@ -1,4 +1,4 @@
-//Packing for the Holiday
+//Packing for Holiday
 package main
 
 import "fmt"
