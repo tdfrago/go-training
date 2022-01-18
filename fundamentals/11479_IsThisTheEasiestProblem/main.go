@@ -5,20 +5,22 @@ import "fmt"
 
 func main() {
 	var t, a, b, c int
+	var s string
 	_, err := fmt.Scan(&t)
 	if err == nil && (t >= 1 && t <= 20) {
 		for i := 1; i <= t; i++ {
 			_, err := fmt.Scan(&a, &b, &c)
 			if err == nil {
 				if (a+b <= c) || (b+c <= a) || (c+a <= b) {
-					fmt.Printf("Case %v: Invalid\n", i)
+					s = "Invalid"
 				} else if (a == b) && (a == c) {
-					fmt.Printf("Case %v: Equilateral\n", i)
+					s = "Equilateral"
 				} else if (a == b) || (b == c) || (c == a) {
-					fmt.Printf("Case %v: Isosceles\n", i)
+					s = "Isosceles"
 				} else {
-					fmt.Printf("Case %v: Scalene\n", i)
+					s = "Scalene"
 				}
+				fmt.Printf("Case %v: %v\n", i, s)
 			}
 		}
 	}
