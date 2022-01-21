@@ -1,3 +1,4 @@
+//Ecological Bin Packing
 package main
 
 import (
