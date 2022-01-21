@@ -2,7 +2,7 @@ Go Training (Fundamental Problem Solving)
 
 25 UVA Problems
 
-1. Back To High School Physics ([10071](https://onlinejudge.org/external/100/10071.pdf))
+1. Back To High School Physics ([10071](https://onlinejudge.org/external/100/10071.pdf)) [Solution](https://github.com/tdfrago/go-training/blob/master/fundamentals/10071_BackToHighSchoolPhysics/main.go)
 2. Odd Sum ([10783](https://onlinejudge.org/external/107/10783.pdf))
 3. Hashmat The Brave Warrior ([10055](https://onlinejudge.org/external/100/10055.pdf))
 4. Relational Operators ([11172](https://onlinejudge.org/external/111/11172.pdf))
