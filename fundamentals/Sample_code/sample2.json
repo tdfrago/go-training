@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Joe Rizal",
+        "job": "Editor",
+        "salary": [{"value":45}, {"value":78.7}]
+    },
+    {
+        "name": "Andy Bonifacio",
+        "job": "Supremo",
+        "salary": [{"value":45}, {"value":78.7}]
+    }
+]
