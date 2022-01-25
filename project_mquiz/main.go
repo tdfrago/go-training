@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -18,6 +19,9 @@ func main() {
 	fp, err := os.Open(*dbname)
 	if err != nil {
 		log.Fatalf("%v", err)
+	}
+	if filepath.Ext(strings.TrimSpace(*dbname)) != ".csv" {
+		log.Fatal("Incorrect database format must be in .csv format")
 	}
 	defer fp.Close()
 
