@@ -20,7 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
-	if filepath.Ext(strings.TrimSpace(*dbname)) != ".csv" {
+	if filepath.Ext(strings.TrimSpace(*dbname)) != ".csv" { //checks if file is in .csv format
 		log.Fatal("Incorrect database format must be in .csv format")
 	}
 	defer fp.Close()
