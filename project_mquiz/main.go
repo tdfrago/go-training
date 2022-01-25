@@ -20,8 +20,12 @@ func main() {
 		log.Fatalf("%v", err)
 	}
 	defer fp.Close()
+
 	r := csv.NewReader(fp)
-	lines, _ := r.ReadAll() //read csv
+	lines, err := r.ReadAll() //read csv
+	if err != nil {
+		log.Fatalf("Failed to parse csv file: %v", err)
+	}
 
 	if *num_questions > len(lines) { //if requested number of questions exceed number of questions in db return error log
 		log.Fatalf("Insufficient Questions: There're only %v questions. User requested %v questions.", len(lines), *num_questions)
