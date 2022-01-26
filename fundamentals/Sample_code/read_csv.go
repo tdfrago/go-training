@@ -14,6 +14,7 @@ func main() {
 	}
 	defer fp.Close()
 	r := csv.NewReader(fp)
+	//r.Comma = "\t"
 	lines, err := r.ReadAll()
 	if err != nil {
 		log.Fatalf("%v", err)
