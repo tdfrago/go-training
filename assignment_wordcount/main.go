@@ -43,7 +43,19 @@ func ReadFile(filename string, ch chan []string) {
 	defer fp.Close()
 
 	file, err := ioutil.ReadAll(fp)
-	list := strings.Fields(strings.ToLower(string(file)))
+
+	//remove non alphanumeric characters
+	n := 0
+	for _, b := range file {
+		if ('a' <= b && b <= 'z') ||
+			('A' <= b && b <= 'Z') ||
+			('0' <= b && b <= '9') ||
+			b == ' ' || b == '\n' {
+			file[n] = b
+			n++
+		}
+	}
+	list := strings.Fields(strings.ToLower(string(file[:n])))
 
 	ch <- list
 }
