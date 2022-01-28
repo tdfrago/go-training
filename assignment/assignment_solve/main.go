@@ -12,6 +12,7 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 }
 
+//handler receives and processes http requests from client
 func handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/solve" {
 		if err := r.ParseForm(); err != nil {
