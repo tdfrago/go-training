@@ -1,0 +1,6 @@
+##GET http://localhost:8080/
+
+##GET  http://localhost:8080/solve?coef=
+
+GET  http://localhost:8080/solve?coef=-3,5,2,-19,5,-1,4,-5,4,-2,2,2
+

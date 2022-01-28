@@ -1,0 +1,5 @@
+##SGET http://localhost:8080/store
+
+POST  http://localhost:8080/store 
+
+{"name":"Harmonica"}
