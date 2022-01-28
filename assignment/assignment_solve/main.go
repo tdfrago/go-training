@@ -2,14 +2,73 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
+	"net/http"
 )
+
+func main() {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(":8080", nil)
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/solve" {
+		if err := r.ParseForm(); err != nil {
+			log.Fatal(err)
+		}
+		if v, ok := r.Form["coef"]; ok {
+			var a, b, c, d, e, f, g, h, i, j, k, l float64
+			if n, _ := fmt.Sscanf(v[0], "%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v,%v", &a, &b, &c, &d, &e, &f, &g, &h, &i, &j, &k, &l); n == 12 {
+				system, result := SolveEquation(a, b, c, d, e, f, g, h, i, j, k, l)
+				fmt.Fprintf(w, "%v\n%v\n", system, result)
+			} else {
+				fmt.Fprintln(w, "incorrect number of coefficients must be 12")
+			}
+		} else {
+			fmt.Fprintln(w, "incorrect parameter must have 'coef'")
+		}
+	} else {
+		fmt.Fprintln(w, "incorrect url must be '/solve'")
+	}
+
+}
+
+func SolveEquation(a, b, c, d, e, f, g, h, i, j, k, l float64) (string, string) {
+	m := [][]float64{{a, b, c}, {e, f, g}, {i, j, k}}
+	mX := [][]float64{{d, b, c}, {h, f, g}, {l, j, k}}
+	mY := [][]float64{{a, d, c}, {e, h, g}, {i, l, k}}
+	mZ := [][]float64{{a, b, d}, {e, f, h}, {i, j, l}}
+	system := fmt.Sprintf("system:\n%vx + %vy + %vz = %v\n%vx + %vy + %vz = %v\n%vx + %vy + %vz = %v\n", a, b, c, d, e, f, g, h, i, j, k, l)
+	result := GetSolution(m, mX, mY, mZ)
+	return system, result
+}
+
+func GetSolution(m, mX, mY, mZ [][]float64) string {
+	detm := ComputeDeterminant(m)
+	detmX := ComputeDeterminant(mX)
+	X := detmX / detm
+	detmY := ComputeDeterminant(mY)
+	Y := detmY / detm
+	detmZ := ComputeDeterminant(mZ)
+	Z := detmZ / detm
+	result := ""
+	if detm == 0 {
+		if math.IsNaN(X) && math.IsNaN(Y) && math.IsNaN(Z) {
+			result = "dependent - with multiple solutions"
+		} else {
+			result = "inconsistent - no solution"
+		}
+	} else {
+		result = fmt.Sprintf("solution:\nx = %.2f, y = %.2f, z = %.2f\n", X, Y, Z)
+	}
+	return result
+}
 
 func ComputeDeterminant(m [][]float64) float64 {
 	minor_m := m[1:]
 	total := 0.0
 	for i := 0; i < len(m); i++ {
-
 		m2x2 := [][]float64{}
 
 		for j := 0; j < len(minor_m); j++ {
@@ -25,34 +84,3 @@ func ComputeDeterminant(m [][]float64) float64 {
 	}
 	return total
 }
-func GetSolution(m, mX, mY, mZ [][]float64) {
-	detm := ComputeDeterminant(m)
-	detmX := ComputeDeterminant(mX)
-	X := detmX / detm
-	detmY := ComputeDeterminant(mY)
-	Y := detmY / detm
-	detmZ := ComputeDeterminant(mZ)
-	Z := detmZ / detm
-	fmt.Println(X, Y, Z)
-	fmt.Println(math.IsNaN(X), X == Y, Y == Z)
-	if detm == 0 {
-		if math.IsNaN(X) && math.IsNaN(Y) && math.IsNaN(Z) {
-			fmt.Println("dependent - with multiple solutions")
-		} else {
-			fmt.Println("inconsistent - no solution")
-		}
-	} else {
-		fmt.Printf("x = %.2v, y = %.2v, z = %.2v\n", X, Y, Z)
-	}
-}
-
-func main() {
-	m := [][]float64{{1, -1, 1}, {3, 2, -12}, {4, 1, -11}}
-	mX := [][]float64{{7, -1, 1}, {11, 2, -12}, {18, 1, -11}}
-	mY := [][]float64{{1, 7, 1}, {3, 11, -12}, {4, 18, -11}}
-	mZ := [][]float64{{1, -1, 7}, {3, 2, 11}, {4, 1, 18}}
-	GetSolution(m, mX, mY, mZ)
-}
-
-//no solution -inf, -inf +inf
-//infinite solution all NaN NaN NaN

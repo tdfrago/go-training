@@ -1,6 +1,8 @@
-##GET http://localhost:8080/
+#UNIQUE SOLUTION
+#GET  http://localhost:8080/solve?coef=4,5,6,7,2,3,1,2,1,2,3,2
 
-##GET  http://localhost:8080/solve?coef=
+#NO SOLUTION
+#GET  http://localhost:8080/solve?coef=1,1,1,2,3,3,3,14,1,-2,1,4
 
-GET  http://localhost:8080/solve?coef=-3,5,2,-19,5,-1,4,-5,4,-2,2,2
-
+#INFINITE SOLUTION
+#GET  http://localhost:8080/solve?coef=-3,5,2,-19,5,-1,4,-5,4,-2,2,2
