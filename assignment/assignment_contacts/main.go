@@ -52,6 +52,7 @@ func (db *Database) process(w http.ResponseWriter, r *http.Request) {
 		db.nextID++
 		db.recs = append(db.recs, rec)
 		db.mu.Unlock()
+		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintln(w, "{\"success\": true}")
 	case "GET":
@@ -61,16 +62,27 @@ func (db *Database) process(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	case "PUT":
-		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	case "DELETE":
-		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
 }
 
 func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "GET":
+		for _, record := range db.recs {
+			if id == record.ID {
+				w.Header().Set("Content-Type", "application/json")
+				if err := json.NewEncoder(w).Encode(record); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+				return
+			}
+		}
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	case "DELETE":
 		exists := false
 		db.mu.Lock()

@@ -1,8 +1,8 @@
 ##Test 1
-GET http://localhost:8080/store
+##DELETE http://localhost:8080/store
 ##Test 2
-#POST http://localhost:8080/store
+POST http://localhost:8080/store
 
-#{"last":"Frago","first":"Tyron","company":"DSG","address":"KNL","country":"Philippines","position":"Data Engineer"}
+{"last":"Frago","first":"Tyron","company":"DSG","address":"KNL","country":"Philippines","position":"Data Engineer"}
 
-#DELETE http://localhost:8080/store/0
+#GET http://localhost:8080/store
