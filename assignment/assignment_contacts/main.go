@@ -84,21 +84,15 @@ func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 		}
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	case "DELETE":
-		exists := false
-		db.mu.Lock()
-		for j, item := range db.recs {
-			if id == item.ID {
+		for j, record := range db.recs {
+			if id == record.ID {
+				db.mu.Lock()
 				db.recs = append(db.recs[:j], db.recs[j+1:]...)
-				exists = true
-				break
+				db.mu.Unlock()
+				fmt.Fprintln(w, "Record has been deleted")
+				return
 			}
 		}
-		db.mu.Unlock()
-		w.Header().Set("Content-Type", "application/json")
-		if exists {
-			fmt.Fprintln(w, "{\"success\": true}")
-		} else {
-			fmt.Fprintln(w, "{\"success\": false}")
-		}
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	}
 }
