@@ -47,6 +47,16 @@ func (db *Database) process(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		for _, record := range db.recs {
+			if rec.Last == record.Last && rec.First == record.First && rec.Company == record.Company && rec.Address == record.Address && rec.Country == record.Country && rec.Position == record.Position {
+				w.WriteHeader(http.StatusConflict)
+				w.Header().Set("Content-Type", "application/json")
+				if err := json.NewEncoder(w).Encode(record); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+				return
+			}
+		}
 		db.mu.Lock()
 		rec.ID = db.nextID
 		db.nextID++
@@ -54,7 +64,7 @@ func (db *Database) process(w http.ResponseWriter, r *http.Request) {
 		db.mu.Unlock()
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintln(w, "{\"success\": true}")
+		fmt.Fprintln(w, http.StatusText(http.StatusCreated))
 	case "GET":
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(db.recs); err != nil {
@@ -83,6 +93,8 @@ func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	case "PUT":
+
 	case "DELETE":
 		for j, record := range db.recs {
 			if id == record.ID {
