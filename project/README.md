@@ -16,9 +16,19 @@ Movies To Watch (Keeps record of movies watched)
 
 # DESCRIPTION
 
--
+-Ideation phase
 
-*MOVIES DATABASE*
+*USERS TABLE*
+
+| Field | Data Type | Description |
+|-------|-----------|-------------|
+| LastName  | string    | User's Last name   |
+| FirstName | string    | User's First name  |
+| UserName | string  | User's Username |
+| Password | string | User's Password |
+| Role | string | User's role |
+
+*MOVIES TABLE*
 
 | Field | Data Type | Description |
 |-------|-----------|-------------|
