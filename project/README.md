@@ -20,8 +20,8 @@ Movies To Watch (Keeps record of movies watched)
 | Year | integer    | Release year  |
 | Director | string  | Director Name |
 | Genre | string | Movie genre |
-| Language | string | Language |
-| Country | string | Position in the Company |
+| Language | string | Language used in the movie |
+| Country | string | Origin of the movie |
 
 # ERROR HANDLING
 
