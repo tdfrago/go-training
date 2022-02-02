@@ -123,7 +123,24 @@ func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				db.mu.Lock()
-				db.recs[id] = rec
+				if rec.Last != "" {
+					db.recs[id].Last = rec.Last
+				}
+				if rec.First != "" {
+					db.recs[id].First = rec.First
+				}
+				if rec.Company != "" {
+					db.recs[id].Company = rec.Company
+				}
+				if rec.Address != "" {
+					db.recs[id].Address = rec.Address
+				}
+				if rec.Country != "" {
+					db.recs[id].Country = rec.Country
+				}
+				if rec.Position != "" {
+					db.recs[id].Position = rec.Position
+				}
 				db.mu.Unlock()
 				fmt.Fprintln(w, "Record has been updated")
 				return

@@ -31,7 +31,7 @@
 ##Test9 PUT /contacts/0 200 Ok
 #PUT http://localhost:8080/contacts/0
 
-#{"last":"Frago","first":"Tyron","company":"DSG","address":"KNL","country":"Philippines","position":"Data Engineer"}
+#{"last":"Frago","first":"Tyron"}
 
 ##Test10 PUT /contacts/1 404 Not Found
 #PUT http://localhost:8080/contacts/1
