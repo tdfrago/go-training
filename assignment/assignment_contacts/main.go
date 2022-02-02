@@ -7,6 +7,7 @@ import (
 	"sync"
 )
 
+//Record struct with ID, LastName, FirstName, Company, Address, Country, and Position fields
 type Record struct {
 	ID       int
 	Last     string
@@ -17,6 +18,7 @@ type Record struct {
 	Position string
 }
 
+//Database struct containing the Records
 type Database struct {
 	nextID int
 	mu     sync.Mutex
@@ -28,19 +30,26 @@ func main() {
 	http.ListenAndServe(":8080", db.handler())
 }
 
+//handler receives and processes http requests from client
 func (db *Database) handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var id int
-		if r.URL.Path == "/store" {
+		if r.URL.Path == "/contacts" {
 			db.process(w, r)
-		} else if n, _ := fmt.Sscanf(r.URL.Path, "/store/%d", &id); n == 1 {
+		} else if n, _ := fmt.Sscanf(r.URL.Path, "/contacts/%d", &id); n == 1 {
 			db.processID(id, w, r)
+		} else {
+			fmt.Fprintln(w, "incorrect url must be '/contacts'")
+
 		}
 	}
 }
 
+//process implements POST, GET, PUT, and DELETE Methods
 func (db *Database) process(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	//POST creates new record and sends 201 Created Status
+	//if records exists, then sends the old record with 409 Conflict status
 	case "POST":
 		var rec Record
 		if err := json.NewDecoder(r.Body).Decode(&rec); err != nil {
@@ -65,23 +74,33 @@ func (db *Database) process(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintln(w, http.StatusText(http.StatusCreated))
+	//GET retrives all records
 	case "GET":
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(db.recs); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+	//PUT method not allowed in process
+	//returns 405 Method not allowed status
 	case "PUT":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	//DELETE method not allowed in process
+	//returns 405 Method not allowed status
 	case "DELETE":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
 }
 
+//processID implements POST, GET, PUT, and DELETE Methods for existing records in database
 func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	//POST method not allowed in processID
+	//returns 405 Method not allowed status
 	case "POST":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	//GET retrieves the record of the specified ID
+	//if ID not in database, the returns 404 Not found status
 	case "GET":
 		for _, record := range db.recs {
 			if id == record.ID {
@@ -93,8 +112,26 @@ func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	//PUT retrieves the record of the specified ID, and updates the record based on the record update
+	//if ID not in database, the returns 404 Not found status
 	case "PUT":
-
+		for _, record := range db.recs {
+			if id == record.ID {
+				var rec Record
+				if err := json.NewDecoder(r.Body).Decode(&rec); err != nil {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+				db.mu.Lock()
+				db.recs[id] = rec
+				db.mu.Unlock()
+				fmt.Fprintln(w, "Record has been updated")
+				return
+			}
+		}
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	//DELETE deletes the record of the specified ID on the database
+	//if ID not in database, the returns 404 Not found status
 	case "DELETE":
 		for j, record := range db.recs {
 			if id == record.ID {

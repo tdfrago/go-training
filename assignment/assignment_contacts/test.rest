@@ -1,10 +1,45 @@
-##Test 1
-#DELETE http://localhost:8080/store/3
-##Test 2
-#POST http://localhost:8080/store
+##Test1 POST /contacts 201 Created
+#POST http://localhost:8080/contacts
+
+#{"last":"Fago","first":"Tron","company":"DG","address":"KL","country":"Philippines","position":"Data Engineer"}
+
+##Test2 POST /contacts 409 Conflict
+#POST http://localhost:8080/contacts
+
+#{"last":"Fago","first":"Tron","company":"DG","address":"KL","country":"Philippines","position":"Data Engineer"}
+
+##Test3 GET /contacts 200 Ok
+#GET http://localhost:8080/contacts
+
+##Test4 PUT /contacts 405 Not allowed
+#PUT http://localhost:8080/contacts
+
+##Test5 DELETE /contacts 405 Not allowed
+#DELETE http://localhost:8080/contacts
+
+##Test6 POST /contacts/0 405 Not allowed
+#POST http://localhost:8080/contacts/0
+
+#{"last":"Fago","first":"Tron","company":"DG","address":"KL","country":"Philippines","position":"Data Engineer"}
+
+##Test7 GET /contacts/0 200 Ok
+#GET http://localhost:8080/contacts/0
+
+##Test8 GET /contacts/1 404 Not Found
+#GET http://localhost:8080/contacts/1
+
+##Test9 PUT /contacts/0 200 Ok
+#PUT http://localhost:8080/contacts/0
 
 #{"last":"Frago","first":"Tyron","company":"DSG","address":"KNL","country":"Philippines","position":"Data Engineer"}
 
-#GET http://localhost:8080/store
+##Test10 PUT /contacts/1 404 Not Found
+#PUT http://localhost:8080/contacts/1
 
-#DELETE http://localhost:8080/store
+#{"last":"Frago","first":"Tyron","company":"DSG","address":"KNL","country":"Philippines","position":"Data Engineer"}
+
+##Test11 DELETE /contacts/0 200 Ok
+#DELETE http://localhost:8080/contacts/0
+
+##Test12 DELETE /contacts/1 404 Not Found
+#DELETE http://localhost:8080/contacts/1
