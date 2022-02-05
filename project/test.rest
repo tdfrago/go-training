@@ -1,12 +1,5 @@
-##Test1 POST /contacts 201 Created
-#POST http://localhost:8080/signup
+#POST http://localhost:8080/signup?lastname=Cruz&firstname=John&username=jcruz&password=password
+#POST http://localhost:8080/login?username=jcruz&password=password
+#POST http://localhost:8080/
+#POST http://localhost:8080/logout
 
-#{"lastName":"Frago","firstName":"Tyron","userName":"tdfrago","password":"12345"}
-
-#POST http://localhost:8080/login
-
-#{"userName":"tdfrago","password":"12345"}
-
-POST http://localhost:8080/logout
-
-{"userName":"tdfrago"}

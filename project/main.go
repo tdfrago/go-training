@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/context"
+	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,6 +21,8 @@ type User struct {
 
 var db *sql.DB
 
+var store = sessions.NewCookieStore([]byte("super-secret"))
+
 func main() {
 	var err error
 	db, err = sql.Open("mysql", "root:password@tcp(localhost:3306)/testdb")
@@ -26,24 +30,11 @@ func main() {
 		fmt.Println("error validatin sql.open arguments")
 		panic(err.Error())
 	}
-	http.ListenAndServe(":8080", handler())
-}
-
-func handler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case "/":
-			//
-		case "/signup":
-			signup(w, r)
-		case "/login":
-			//
-		case "/logout":
-			//
-		default:
-			fmt.Fprintln(w, "incorrect url'")
-		}
-	}
+	http.HandleFunc("/", home)
+	http.HandleFunc("/signup", signup)
+	http.HandleFunc("/login", login)
+	http.HandleFunc("/logout", logout)
+	http.ListenAndServe(":8080", context.ClearHandler(http.DefaultServeMux))
 }
 
 func signup(w http.ResponseWriter, r *http.Request) {
@@ -96,6 +87,84 @@ func signup(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Println("User has been created.")
 		fmt.Fprintln(w, "User has been successfully created")
+	case "GET":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "PUT":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "DELETE":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		r.ParseForm()
+		username := r.FormValue("username")
+		password := r.FormValue("password")
+		fmt.Printf("username: %v, password: %v\n", username, password)
+
+		var Id, hash string
+		stmt := "SELECT Id, Password FROM users WHERE UserName =?"
+		row := db.QueryRow(stmt, username)
+		err := row.Scan(&Id, &hash)
+		fmt.Println("hass:", hash)
+		if err != nil {
+			fmt.Println("error getting hash", err)
+			fmt.Fprint(w, "username not found")
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+		if err == nil {
+			session, _ := store.Get(r, "session")
+			session.Values["Id"] = Id
+			session.Save(r, w)
+			fmt.Println("User has logged in.")
+			fmt.Fprint(w, "You have successfully logged in")
+			return
+		}
+		fmt.Print("Incorrect password")
+		fmt.Fprint(w, "Incorrect password")
+
+	case "GET":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "PUT":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "DELETE":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func home(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	Id, ok := session.Values["Id"]
+	fmt.Println("ok:", ok)
+	if !ok {
+		fmt.Fprint(w, "not logged in")
+		return
+	}
+	stmt := "SELECT FirstName FROM users WHERE Id =?"
+	row := db.QueryRow(stmt, Id)
+	var firstname string
+	err := row.Scan(&firstname)
+	fmt.Println("username:", firstname)
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+	fmt.Printf("Hi! %v is seeing the home page.\n", firstname)
+	fmt.Fprintf(w, "Hi! %v is seeing the homepage", firstname)
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		session, _ := store.Get(r, "session")
+		delete(session.Values, "Id")
+		session.Save(r, w)
+		fmt.Println("User has logged out")
+		fmt.Fprintln(w, "You have logged out")
 	case "GET":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	case "PUT":
