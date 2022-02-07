@@ -34,6 +34,10 @@ func main() {
 	http.HandleFunc("/signup", signup)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/logout", logout)
+	http.HandleFunc("/addmovie", addmovie)
+	//http.HandleFunc("/updatemovie", updatemovie)
+	//http.HandleFunc("/deletemovie",deletemovie)
+	//http.HandleFunct("/viewmovies",viewmovies)
 	http.ListenAndServe(":8080", context.ClearHandler(http.DefaultServeMux))
 }
 
@@ -80,7 +84,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("number of rows affected:", rows_affected)
 		fmt.Print("last inserted id:", last_insertedId)
 		fmt.Println("error:", err)
-		if err != nil {
+		if err != nil || rows_affected != 1 {
 			fmt.Println("Error registering new user:", err)
 			return
 		}
@@ -165,6 +169,70 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		session.Save(r, w)
 		fmt.Println("User has logged out")
 		fmt.Fprintln(w, "You have logged out")
+	case "GET":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "PUT":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "DELETE":
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func addmovie(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		session, _ := store.Get(r, "session")
+		Id, ok := session.Values["Id"]
+		fmt.Println("ok:", ok)
+		if !ok {
+			fmt.Fprint(w, "not logged in")
+			return
+		}
+		stmt := "SELECT UserName, FirstName FROM users WHERE Id =?"
+		row := db.QueryRow(stmt, Id)
+		var username, firstname string
+		err := row.Scan(&username, &firstname)
+		fmt.Println("firstname:", firstname)
+		if err != nil {
+			fmt.Println("error:", err)
+			return
+		}
+		r.ParseForm()
+		title := r.FormValue("title")
+		genre := r.FormValue("genre")
+		year := r.FormValue("year")
+		director := r.FormValue("director")
+		language := r.FormValue("language")
+		country := r.FormValue("country")
+		status := r.FormValue("status")
+
+		if title == "" || genre == "" || year == "" || director == "" || language == "" || country == "" || status == "" {
+			fmt.Println("Must fill in all fields")
+			fmt.Fprintln(w, "Please fill in all fields")
+			return
+		}
+
+		var insert_stmt *sql.Stmt
+		insert_stmt, err = db.Prepare("INSERT INTO movies (UserName, Title, Genre, Year, Director, Language, Country, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
+		if err != nil {
+			fmt.Println("error statement:", err)
+		}
+		defer insert_stmt.Close()
+
+		result, err := insert_stmt.Exec(username, title, genre, year, director, language, country, status)
+		rows_affected, _ := result.RowsAffected()
+		last_insertedId, _ := result.LastInsertId()
+		fmt.Println("number of rows affected:", rows_affected)
+		fmt.Print("last inserted id:", last_insertedId)
+		fmt.Println("error:", err)
+
+		if err != nil || rows_affected != 1 {
+			fmt.Println("Error adding a movie:", err)
+			return
+		}
+
+		fmt.Printf("%v added a movie.\n", firstname)
+		fmt.Fprintf(w, "Hi %v! Movie has been added.", firstname)
 	case "GET":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	case "PUT":

@@ -2,4 +2,5 @@
 #POST http://localhost:8080/login?username=jcruz&password=password
 #POST http://localhost:8080/
 #POST http://localhost:8080/logout
+#POST http://localhost:8080/addmovie?title=Encanto&genre=comedy&year=2021&director=Jared_Bush&language=english&country=US&status=for_watching
 
