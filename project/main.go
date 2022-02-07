@@ -51,7 +51,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		fmt.Printf("lastname:%v,firstname:%v,username:%v,password:%v\n", lastname, firstname, username, password)
 
-		stmt := "SELECT Id FROM users WHERE username = ?"
+		stmt := "SELECT Id FROM testdb.users WHERE username = ?"
 		row := db.QueryRow(stmt, username)
 		var Id string
 		err := row.Scan(&Id)
@@ -71,7 +71,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("string(hash):", string(hash))
 
 		var insert_stmt *sql.Stmt
-		insert_stmt, err = db.Prepare("INSERT INTO users (LastName, FirstName, UserName, Password) VALUES (?, ?, ?, ?);")
+		insert_stmt, err = db.Prepare("INSERT INTO testdb.users (LastName, FirstName, UserName, Password) VALUES (?, ?, ?, ?);")
 		if err != nil {
 			fmt.Println("error statement:", err)
 		}
@@ -148,7 +148,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "not logged in")
 		return
 	}
-	stmt := "SELECT FirstName FROM users WHERE Id =?"
+	stmt := "SELECT FirstName FROM testdb.users WHERE Id =?"
 	row := db.QueryRow(stmt, Id)
 	var firstname string
 	err := row.Scan(&firstname)
@@ -188,7 +188,7 @@ func addmovie(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprint(w, "not logged in")
 			return
 		}
-		stmt := "SELECT UserName, FirstName FROM users WHERE Id =?"
+		stmt := "SELECT UserName, FirstName FROM testdb.users WHERE Id =?"
 		row := db.QueryRow(stmt, Id)
 		var username, firstname string
 		err := row.Scan(&username, &firstname)
@@ -212,8 +212,18 @@ func addmovie(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		movie_stmt := "SELECT Id FROM testdb.movies WHERE UserName = ? AND Title = ? AND Genre = ? AND Year = ? AND Director = ? AND Language = ? AND Country= ?"
+		movie_row := db.QueryRow(movie_stmt, username, title, genre, year, director, language, country)
+		var movieId string
+		err = movie_row.Scan(&movieId)
+		if err != sql.ErrNoRows {
+			fmt.Println("Movie already added on list", err)
+			fmt.Fprintln(w, "Movie already added on list")
+			return
+		}
+
 		var insert_stmt *sql.Stmt
-		insert_stmt, err = db.Prepare("INSERT INTO movies (UserName, Title, Genre, Year, Director, Language, Country, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
+		insert_stmt, err = db.Prepare("INSERT INTO testdb.movies (UserName, Title, Genre, Year, Director, Language, Country, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 		if err != nil {
 			fmt.Println("error statement:", err)
 		}

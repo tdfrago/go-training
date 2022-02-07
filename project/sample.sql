@@ -17,3 +17,5 @@ CREATE TABLE `testdb`.`movies` (
   `Status` VARCHAR(100) NOT NULL,
   `UserName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`));
+
+  SELECT Id FROM testdb.movies WHERE UserName = ? AND Title = ? AND Genre = ? AND Year = ? AND Director = ? AND Language = ? AND Country= ?;
