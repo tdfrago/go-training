@@ -17,13 +17,19 @@
 
 #POST http://localhost:8080/
 #POST http://localhost:8080/logout
-POST http://localhost:8080/addmovie
+
+GET http://localhost:8080/movies
+
+
+POST http://localhost:8080/movies
+
 {
-    "Title" : "The Call",
+    "Title" : "Parasite",
     "Genre" : "Thriller",
-    "Year" : 2021,
-    "Director":"Lee Chung-hyun",
+    "Year" : 2019,
+    "Director":"Bong Joon-ho",
     "Language":"Korean",
     "Country":"Korea",
     "Status":"watched"
 }
+

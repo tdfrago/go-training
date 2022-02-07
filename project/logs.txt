@@ -1,5 +1,0 @@
-INFO: 2022/02/07 20:06:08 main.go:87: user signup input
-INFO: 2022/02/07 20:06:17 main.go:87: user signup input
-2022/02/07 20:07:18 main.go:87: user signup input
-2022/02/07 20:09:44 main.go:87: user signup input
-2022/02/07 20:13:27 main.go:87: user signup input
