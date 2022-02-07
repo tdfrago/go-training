@@ -1,6 +1,29 @@
-#POST http://localhost:8080/signup?lastname=Cruz&firstname=John&username=jcruz&password=password
-#POST http://localhost:8080/login?username=jcruz&password=password
+
+#POST http://localhost:8080/signup?lastname=Go&firstname=Ty&username=TyGo&password=password
+
+#{
+#    "LastName" : "Rizal",
+#	"FirstName" : "Jose",
+#	"UserName" : "JRizal",
+#	"Password" : "n0l1!"
+#}
+
+#POST http://localhost:8080/login
+#
+#{
+#    "UserName" : "JRizal",
+#    "Password" : "n0l1!"
+#}
+
 #POST http://localhost:8080/
 #POST http://localhost:8080/logout
-#POST http://localhost:8080/addmovie?title=Encanto&genre=comedy&year=2021&director=Jared_Bush&language=english&country=US&status=for_watching
-
+POST http://localhost:8080/addmovie
+{
+    "Title" : "The Call",
+    "Genre" : "Thriller",
+    "Year" : 2021,
+    "Director":"Lee Chung-hyun",
+    "Language":"Korean",
+    "Country":"Korea",
+    "Status":"watched"
+}

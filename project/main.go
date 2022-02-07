@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/context"
@@ -19,9 +21,46 @@ type User struct {
 	Password  string
 }
 
+type UserLogin struct {
+	UserName string
+	Password string
+}
+
+type Movie struct {
+	Id       int
+	Title    string
+	Genre    string
+	Year     int
+	Director string
+	Language string
+	Country  string
+	Status   string
+	UserName string
+}
+
 var db *sql.DB
 
 var store = sessions.NewCookieStore([]byte("super-secret"))
+
+func logger(username, message string) {
+	date := time.Now().Format("01-02-2006")
+	time := time.Now().Format("15:04:05.00")
+	fmt.Println(username, message, date, time)
+	var insert_stmt *sql.Stmt
+	var err error
+	insert_stmt, err = db.Prepare("INSERT INTO testdb.logs (Date, Time, UserName, Message) VALUES (?, ?, ?, ?);")
+	if err != nil {
+		fmt.Println("error statement:", err)
+	}
+	defer insert_stmt.Close()
+	fmt.Println(insert_stmt)
+	var result sql.Result
+	result, err = insert_stmt.Exec(date, time, username, message)
+	rows_affected, _ := result.RowsAffected()
+	if err != nil || rows_affected != 1 {
+		insert_stmt.Exec(date, time, username, "error log")
+	}
+}
 
 func main() {
 	var err error
@@ -34,62 +73,70 @@ func main() {
 	http.HandleFunc("/signup", signup)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/logout", logout)
-	http.HandleFunc("/addmovie", addmovie)
-	//http.HandleFunc("/updatemovie", updatemovie)
-	//http.HandleFunc("/deletemovie",deletemovie)
-	//http.HandleFunct("/viewmovies",viewmovies)
+	http.HandleFunc("/movies", movies)
+
 	http.ListenAndServe(":8080", context.ClearHandler(http.DefaultServeMux))
 }
 
 func signup(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		r.ParseForm()
-		lastname := r.FormValue("lastname")
-		firstname := r.FormValue("firstname")
-		username := r.FormValue("username")
-		password := r.FormValue("password")
+		var user User
+		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+			logger("", "error parsing json")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		var Id string
+
+		lastname := user.LastName
+		firstname := user.FirstName
+		username := user.UserName
+		password := user.Password
+
 		fmt.Printf("lastname:%v,firstname:%v,username:%v,password:%v\n", lastname, firstname, username, password)
+
+		logger(username, "user signup input")
 
 		stmt := "SELECT Id FROM testdb.users WHERE username = ?"
 		row := db.QueryRow(stmt, username)
-		var Id string
+
 		err := row.Scan(&Id)
 		if err != sql.ErrNoRows {
-			fmt.Println("Username already exists:", err)
 			fmt.Fprintln(w, "Username already exists")
+			logger(username, "username already exists")
 			return
 		}
+		logger(username, "username does not yet exist")
 
 		var hash []byte
 		hash, err = bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			fmt.Println("err:", err)
+			logger(username, "error hashing password")
 			return
 		}
 		fmt.Println("hash:", hash)
 		fmt.Println("string(hash):", string(hash))
+		logger(username, "password converted to hash")
 
 		var insert_stmt *sql.Stmt
 		insert_stmt, err = db.Prepare("INSERT INTO testdb.users (LastName, FirstName, UserName, Password) VALUES (?, ?, ?, ?);")
 		if err != nil {
-			fmt.Println("error statement:", err)
+			logger(username, "error preparing insert statement")
+			return
 		}
 		defer insert_stmt.Close()
 
 		var result sql.Result
 		result, err = insert_stmt.Exec(lastname, firstname, username, hash)
 		rows_affected, _ := result.RowsAffected()
-		last_insertedId, _ := result.LastInsertId()
-		fmt.Println("number of rows affected:", rows_affected)
-		fmt.Print("last inserted id:", last_insertedId)
-		fmt.Println("error:", err)
+
 		if err != nil || rows_affected != 1 {
-			fmt.Println("Error registering new user:", err)
+			logger(username, "error registering new user")
 			return
 		}
-
-		fmt.Println("User has been created.")
+		logger(username, "user has been successfully created")
 		fmt.Fprintln(w, "User has been successfully created")
 	case "GET":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -103,18 +150,26 @@ func signup(w http.ResponseWriter, r *http.Request) {
 func login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		r.ParseForm()
-		username := r.FormValue("username")
-		password := r.FormValue("password")
+		var user UserLogin
+		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+			logger("", "error parsing json")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		username := user.UserName
+		password := user.Password
+
 		fmt.Printf("username: %v, password: %v\n", username, password)
+		logger(username, "user login input")
 
 		var Id, hash string
-		stmt := "SELECT Id, Password FROM users WHERE UserName =?"
+		stmt := "SELECT Id, Password FROM testdb.users WHERE UserName =?"
 		row := db.QueryRow(stmt, username)
 		err := row.Scan(&Id, &hash)
 		fmt.Println("hass:", hash)
 		if err != nil {
-			fmt.Println("error getting hash", err)
+			logger(username, "username not found")
 			fmt.Fprint(w, "username not found")
 			return
 		}
@@ -122,13 +177,24 @@ func login(w http.ResponseWriter, r *http.Request) {
 		err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 		if err == nil {
 			session, _ := store.Get(r, "session")
+			if Id, ok := session.Values["Id"]; ok {
+				stmt = "SELECT UserName FROM testdb.users WHERE Id =?"
+				row = db.QueryRow(stmt, Id)
+				_ = row.Scan(&username)
+				fmt.Println("ok:", ok)
+				if ok {
+					logger(username, "user already logged in")
+					fmt.Fprint(w, "You are already logged in")
+					return
+				}
+			}
 			session.Values["Id"] = Id
 			session.Save(r, w)
-			fmt.Println("User has logged in.")
+			logger(username, "user has logged in")
 			fmt.Fprint(w, "You have successfully logged in")
 			return
 		}
-		fmt.Print("Incorrect password")
+		logger(username, "incorrect password")
 		fmt.Fprint(w, "Incorrect password")
 
 	case "GET":
@@ -164,10 +230,20 @@ func home(w http.ResponseWriter, r *http.Request) {
 func logout(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
+		var username string
 		session, _ := store.Get(r, "session")
+		Id, ok := session.Values["Id"]
+		stmt := "SELECT UserName FROM testdb.users WHERE Id =?"
+		row := db.QueryRow(stmt, Id)
+		err := row.Scan(&username)
+		if err != nil || !ok {
+			logger(username, "user not logged in")
+			fmt.Fprintln(w, "You are not logged in.")
+			return
+		}
 		delete(session.Values, "Id")
 		session.Save(r, w)
-		fmt.Println("User has logged out")
+		logger(username, "user has logged out")
 		fmt.Fprintln(w, "You have logged out")
 	case "GET":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -178,36 +254,42 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func addmovie(w http.ResponseWriter, r *http.Request) {
+func movies(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	Id, ok := session.Values["Id"]
+	fmt.Println("ok:", ok)
+	stmt := "SELECT UserName, FirstName FROM testdb.users WHERE Id =?"
+	row := db.QueryRow(stmt, Id)
+	var username, firstname string
+	err := row.Scan(&username, &firstname)
+	if err != nil || !ok {
+		logger(username, "user not logged in")
+		fmt.Fprintln(w, "You are not logged in.")
+		return
+	}
+	fmt.Println("firstname:", firstname)
+
 	switch r.Method {
 	case "POST":
-		session, _ := store.Get(r, "session")
-		Id, ok := session.Values["Id"]
-		fmt.Println("ok:", ok)
-		if !ok {
-			fmt.Fprint(w, "not logged in")
+		var movie Movie
+		if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
+			logger("", "error parsing json")
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		stmt := "SELECT UserName, FirstName FROM testdb.users WHERE Id =?"
-		row := db.QueryRow(stmt, Id)
-		var username, firstname string
-		err := row.Scan(&username, &firstname)
-		fmt.Println("firstname:", firstname)
-		if err != nil {
-			fmt.Println("error:", err)
-			return
-		}
-		r.ParseForm()
-		title := r.FormValue("title")
-		genre := r.FormValue("genre")
-		year := r.FormValue("year")
-		director := r.FormValue("director")
-		language := r.FormValue("language")
-		country := r.FormValue("country")
-		status := r.FormValue("status")
 
-		if title == "" || genre == "" || year == "" || director == "" || language == "" || country == "" || status == "" {
-			fmt.Println("Must fill in all fields")
+		title := movie.Title
+		genre := movie.Genre
+		year := movie.Year
+		director := movie.Director
+		language := movie.Language
+		country := movie.Country
+		status := movie.Status
+
+		logger(username, "user movie input")
+
+		if title == "" || genre == "" || year == 0 || director == "" || language == "" || country == "" || status == "" {
+			logger(username, "user must fill in all fields")
 			fmt.Fprintln(w, "Please fill in all fields")
 			return
 		}
@@ -217,7 +299,7 @@ func addmovie(w http.ResponseWriter, r *http.Request) {
 		var movieId string
 		err = movie_row.Scan(&movieId)
 		if err != sql.ErrNoRows {
-			fmt.Println("Movie already added on list", err)
+			logger(username, "movie already added on list")
 			fmt.Fprintln(w, "Movie already added on list")
 			return
 		}
@@ -225,6 +307,7 @@ func addmovie(w http.ResponseWriter, r *http.Request) {
 		var insert_stmt *sql.Stmt
 		insert_stmt, err = db.Prepare("INSERT INTO testdb.movies (UserName, Title, Genre, Year, Director, Language, Country, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 		if err != nil {
+			logger(username, "error preparing insert statement")
 			fmt.Println("error statement:", err)
 		}
 		defer insert_stmt.Close()
@@ -237,14 +320,42 @@ func addmovie(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error:", err)
 
 		if err != nil || rows_affected != 1 {
-			fmt.Println("Error adding a movie:", err)
+			logger(username, "error adding movie")
 			return
 		}
 
-		fmt.Printf("%v added a movie.\n", firstname)
+		logger(username, "movie added")
+		w.WriteHeader(http.StatusCreated)
+		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintf(w, "Hi %v! Movie has been added.", firstname)
 	case "GET":
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		query_stmt := "SELECT * FROM testdb.movies WHERE UserName = ?;"
+		rows, err := db.Query(query_stmt, username)
+		if err != nil {
+			logger(username, "empty movie watchlist")
+			fmt.Fprintln(w, "empty movie watchlist")
+		}
+		defer rows.Close()
+
+		var movies []Movie
+
+		for rows.Next() {
+			var movie Movie
+			err = rows.Scan(&movie.Id, &movie.Title, &movie.Genre, &movie.Year, &movie.Director, &movie.Language, &movie.Country, &movie.Status, &movie.UserName)
+			if err != nil {
+				logger(username, "error movie watchlist")
+				fmt.Fprintln(w, "error movie watchlist")
+			}
+			movies = append(movies, movie)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(movies); err != nil {
+			logger(username, "error encoding json")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		logger(username, "success retrieving movie watchlist")
 	case "PUT":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	case "DELETE":
