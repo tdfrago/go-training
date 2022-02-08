@@ -18,18 +18,20 @@
 #POST http://localhost:8080/
 #POST http://localhost:8080/logout
 
-GET http://localhost:8080/movies
+DELETE http://localhost:8080/movies/?Id=5
+
+#GET http://localhost:8080/movies
 
 
-POST http://localhost:8080/movies
+#POST http://localhost:8080/movies
 
-{
-    "Title" : "Parasite",
-    "Genre" : "Thriller",
-    "Year" : 2019,
-    "Director":"Bong Joon-ho",
-    "Language":"Korean",
-    "Country":"Korea",
-    "Status":"watched"
-}
+#{
+#    "Title" : "Parasite",
+#    "Genre" : "Thriller",
+#    "Year" : 2019,
+#    "Director":"Bong Joon-ho",
+#    "Language":"Korean",
+#    "Country":"Korea",
+#    "Status":"watched"
+#}
 

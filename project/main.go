@@ -69,16 +69,17 @@ func main() {
 		fmt.Println("error validatin sql.open arguments")
 		panic(err.Error())
 	}
-	http.HandleFunc("/", home)
-	http.HandleFunc("/signup", signup)
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/logout", logout)
-	http.HandleFunc("/movies", movies)
+	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/signup", signupHandler)
+	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/logout", logoutHandler)
+	http.HandleFunc("/movies", moviesHandler)
+	http.HandleFunc("/movies/", moviesIdHandler)
 
 	http.ListenAndServe(":8080", context.ClearHandler(http.DefaultServeMux))
 }
 
-func signup(w http.ResponseWriter, r *http.Request) {
+func signupHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		var user User
@@ -147,7 +148,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
+func loginHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		var user UserLogin
@@ -206,7 +207,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
+func homeHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	Id, ok := session.Values["Id"]
 	fmt.Println("ok:", ok)
@@ -227,7 +228,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hi! %v is seeing the homepage", firstname)
 }
 
-func logout(w http.ResponseWriter, r *http.Request) {
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		var username string
@@ -254,7 +255,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func movies(w http.ResponseWriter, r *http.Request) {
+func moviesHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	Id, ok := session.Values["Id"]
 	fmt.Println("ok:", ok)
@@ -309,14 +310,13 @@ func movies(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			logger(username, "error preparing insert statement")
 			fmt.Println("error statement:", err)
+			return
 		}
 		defer insert_stmt.Close()
 
 		result, err := insert_stmt.Exec(username, title, genre, year, director, language, country, status)
 		rows_affected, _ := result.RowsAffected()
-		last_insertedId, _ := result.LastInsertId()
 		fmt.Println("number of rows affected:", rows_affected)
-		fmt.Print("last inserted id:", last_insertedId)
 		fmt.Println("error:", err)
 
 		if err != nil || rows_affected != 1 {
@@ -328,12 +328,14 @@ func movies(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintf(w, "Hi %v! Movie has been added.", firstname)
+
 	case "GET":
 		query_stmt := "SELECT * FROM testdb.movies WHERE UserName = ?;"
 		rows, err := db.Query(query_stmt, username)
 		if err != nil {
 			logger(username, "empty movie watchlist")
 			fmt.Fprintln(w, "empty movie watchlist")
+			return
 		}
 		defer rows.Close()
 
@@ -345,6 +347,7 @@ func movies(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				logger(username, "error movie watchlist")
 				fmt.Fprintln(w, "error movie watchlist")
+				return
 			}
 			movies = append(movies, movie)
 		}
@@ -356,9 +359,130 @@ func movies(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		logger(username, "success retrieving movie watchlist")
+
 	case "PUT":
+		logger(username, "status method not allowed")
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	case "DELETE":
+		logger(username, "status method not allowed")
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func moviesIdHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	Id, ok := session.Values["Id"]
+	fmt.Println("ok:", ok)
+	stmt := "SELECT UserName, FirstName FROM testdb.users WHERE Id =?"
+	row := db.QueryRow(stmt, Id)
+	var username, firstname string
+	err := row.Scan(&username, &firstname)
+	if err != nil || !ok {
+		logger(username, "user not logged in")
+		fmt.Fprintln(w, "You are not logged in.")
+		return
+	}
+
+	fmt.Println("firstname:", firstname)
+	r.ParseForm()
+	id := r.FormValue("Id")
+	movie_stmt := "SELECT * FROM testdb.movies WHERE UserName = ? AND Id = ?"
+	movie_row := db.QueryRow(movie_stmt, username, id)
+	var movie Movie
+	err = movie_row.Scan(&movie.Id, &movie.Title, &movie.Genre, &movie.Year, &movie.Director, &movie.Language, &movie.Country, &movie.Status, &movie.UserName)
+	if err != nil {
+		logger(username, "movie not found")
+		fmt.Fprintln(w, "movie not found")
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		logger(username, "status method not allowed")
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	case "GET":
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(movie); err != nil {
+			logger(username, "error encoding json")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		logger(username, "success retrieving movie")
+	case "PUT":
+		var movie_update Movie
+		if err := json.NewDecoder(r.Body).Decode(&movie_update); err != nil {
+			logger("", "error parsing json")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if movie_update.Title != "" {
+			movie.Title = movie_update.Title
+		}
+		if movie_update.Genre != "" {
+			movie.Genre = movie_update.Genre
+		}
+		if movie_update.Year != 0 {
+			movie.Year = movie_update.Year
+		}
+		if movie_update.Director != "" {
+			movie.Director = movie_update.Director
+		}
+		if movie_update.Language != "" {
+			movie.Language = movie_update.Language
+		}
+		if movie_update.Country != "" {
+			movie.Country = movie_update.Country
+		}
+		if movie_update.Status != "" {
+			movie.Status = movie_update.Status
+		}
+
+		var update_stmt *sql.Stmt
+		update_stmt, err := db.Prepare("UPDATE testdb.movies SET Title = ?, Genre = ?, Year = ?, Director = ?, Language = ?, Country = ?, Status = ? WHERE UserName = ? AND Id =?;")
+		if err != nil {
+			logger(username, "error preparing update statement")
+			fmt.Println("error statement:", err)
+			return
+		}
+		defer update_stmt.Close()
+
+		result, err := update_stmt.Exec(movie.Title, movie.Genre, movie.Year, movie.Director, movie.Language, movie.Country, movie.Status, username, id)
+		rows_affected, _ := result.RowsAffected()
+		fmt.Println("number of rows affected:", rows_affected)
+		fmt.Println("error:", err)
+
+		if err != nil || rows_affected != 1 {
+			logger(username, "no updated movie")
+			fmt.Println("error statement:", err)
+			fmt.Fprintf(w, "Hi %v! No changes made.", firstname)
+			return
+		}
+
+		logger(username, "movie updated")
+		fmt.Fprintf(w, "Hi %v! Movie has been updated.", firstname)
+
+	case "DELETE":
+		var delete_stmt *sql.Stmt
+		delete_stmt, err = db.Prepare("DELETE FROM testdb.movies WHERE UserName = ? AND Id =?;")
+		if err != nil {
+			logger(username, "error preparing delete statement")
+			fmt.Println("error statement:", err)
+			return
+		}
+		defer delete_stmt.Close()
+
+		result, err := delete_stmt.Exec(username, id)
+		rows_affected, _ := result.RowsAffected()
+		fmt.Println("number of rows affected:", rows_affected)
+		fmt.Println("error:", err)
+
+		if err != nil || rows_affected != 1 {
+			logger(username, "no deleted movie")
+			fmt.Fprintf(w, "Hi %v! No changes made.", firstname)
+			return
+		}
+
+		logger(username, "movie deleted")
+		fmt.Fprintf(w, "Hi %v! Movie has been delete.", firstname)
 	}
 }
