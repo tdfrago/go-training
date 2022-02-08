@@ -42,26 +42,6 @@ var db *sql.DB
 
 var store = sessions.NewCookieStore([]byte("super-secret"))
 
-func logger(username, message string) {
-	date := time.Now().Format("01-02-2006")
-	time := time.Now().Format("15:04:05.00")
-	fmt.Println(username, message, date, time)
-	var insert_stmt *sql.Stmt
-	var err error
-	insert_stmt, err = db.Prepare("INSERT INTO testdb.logs (Date, Time, UserName, Message) VALUES (?, ?, ?, ?);")
-	if err != nil {
-		fmt.Println("error statement:", err)
-	}
-	defer insert_stmt.Close()
-	fmt.Println(insert_stmt)
-	var result sql.Result
-	result, err = insert_stmt.Exec(date, time, username, message)
-	rows_affected, _ := result.RowsAffected()
-	if err != nil || rows_affected != 1 {
-		insert_stmt.Exec(date, time, username, "error log")
-	}
-}
-
 func main() {
 	var err error
 	db, err = sql.Open("mysql", "root:password@tcp(localhost:3306)/testdb")
@@ -211,21 +191,18 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	Id, ok := session.Values["Id"]
 	fmt.Println("ok:", ok)
-	if !ok {
-		fmt.Fprint(w, "not logged in")
-		return
-	}
-	stmt := "SELECT FirstName FROM testdb.users WHERE Id =?"
+	stmt := "SELECT UserName FROM testdb.users WHERE Id =?"
 	row := db.QueryRow(stmt, Id)
-	var firstname string
-	err := row.Scan(&firstname)
-	fmt.Println("username:", firstname)
-	if err != nil {
-		fmt.Println("error:", err)
+	var username string
+	err := row.Scan(&username)
+	if err != nil || !ok {
+		logger(username, "user not logged in")
+		fmt.Fprintln(w, "You are not logged in.")
 		return
 	}
-	fmt.Printf("Hi! %v is seeing the home page.\n", firstname)
-	fmt.Fprintf(w, "Hi! %v is seeing the homepage", firstname)
+	logger(username, "user is currently logged in")
+	fmt.Printf("User %v is logged in", username)
+	fmt.Fprintf(w, "Hi! %v is seeing the homepage", username)
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
@@ -259,16 +236,17 @@ func moviesHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	Id, ok := session.Values["Id"]
 	fmt.Println("ok:", ok)
-	stmt := "SELECT UserName, FirstName FROM testdb.users WHERE Id =?"
+	stmt := "SELECT UserName FROM testdb.users WHERE Id =?"
 	row := db.QueryRow(stmt, Id)
-	var username, firstname string
-	err := row.Scan(&username, &firstname)
+	var username string
+	err := row.Scan(&username)
 	if err != nil || !ok {
 		logger(username, "user not logged in")
 		fmt.Fprintln(w, "You are not logged in.")
 		return
 	}
-	fmt.Println("firstname:", firstname)
+	logger(username, "user is currently logged in")
+	fmt.Printf("User %v is logged in", username)
 
 	switch r.Method {
 	case "POST":
@@ -327,7 +305,7 @@ func moviesHandler(w http.ResponseWriter, r *http.Request) {
 		logger(username, "movie added")
 		w.WriteHeader(http.StatusCreated)
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, "Hi %v! Movie has been added.", firstname)
+		fmt.Fprintf(w, "Hi %v! Movie has been added.", username)
 
 	case "GET":
 		query_stmt := "SELECT * FROM testdb.movies WHERE UserName = ?;"
@@ -373,17 +351,18 @@ func moviesIdHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session")
 	Id, ok := session.Values["Id"]
 	fmt.Println("ok:", ok)
-	stmt := "SELECT UserName, FirstName FROM testdb.users WHERE Id =?"
+	stmt := "SELECT UserName FROM testdb.users WHERE Id =?"
 	row := db.QueryRow(stmt, Id)
-	var username, firstname string
-	err := row.Scan(&username, &firstname)
+	var username string
+	err := row.Scan(&username)
 	if err != nil || !ok {
 		logger(username, "user not logged in")
 		fmt.Fprintln(w, "You are not logged in.")
 		return
 	}
+	logger(username, "user is currently logged in")
+	fmt.Printf("User %v is logged in", username)
 
-	fmt.Println("firstname:", firstname)
 	r.ParseForm()
 	id := r.FormValue("Id")
 	movie_stmt := "SELECT * FROM testdb.movies WHERE UserName = ? AND Id = ?"
@@ -454,12 +433,12 @@ func moviesIdHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil || rows_affected != 1 {
 			logger(username, "no updated movie")
 			fmt.Println("error statement:", err)
-			fmt.Fprintf(w, "Hi %v! No changes made.", firstname)
+			fmt.Fprintf(w, "Hi %v! No changes made.", username)
 			return
 		}
 
 		logger(username, "movie updated")
-		fmt.Fprintf(w, "Hi %v! Movie has been updated.", firstname)
+		fmt.Fprintf(w, "Hi %v! Movie has been updated.", username)
 
 	case "DELETE":
 		var delete_stmt *sql.Stmt
@@ -478,11 +457,31 @@ func moviesIdHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil || rows_affected != 1 {
 			logger(username, "no deleted movie")
-			fmt.Fprintf(w, "Hi %v! No changes made.", firstname)
+			fmt.Fprintf(w, "Hi %v! No changes made.", username)
 			return
 		}
 
 		logger(username, "movie deleted")
-		fmt.Fprintf(w, "Hi %v! Movie has been delete.", firstname)
+		fmt.Fprintf(w, "Hi %v! Movie has been delete.", username)
+	}
+}
+
+func logger(username, message string) {
+	date := time.Now().Format("01-02-2006")
+	time := time.Now().Format("15:04:05.00")
+	fmt.Println(username, message, date, time)
+	var insert_stmt *sql.Stmt
+	var err error
+	insert_stmt, err = db.Prepare("INSERT INTO testdb.logs (Date, Time, UserName, Message) VALUES (?, ?, ?, ?);")
+	if err != nil {
+		fmt.Println("error statement:", err)
+	}
+	defer insert_stmt.Close()
+	fmt.Println(insert_stmt)
+	var result sql.Result
+	result, err = insert_stmt.Exec(date, time, username, message)
+	rows_affected, _ := result.RowsAffected()
+	if err != nil || rows_affected != 1 {
+		insert_stmt.Exec(date, time, username, "error log")
 	}
 }
