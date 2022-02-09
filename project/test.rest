@@ -1,15 +1,16 @@
+GET http://localhost:8080/
 
 #POST http://localhost:8080/signup
-
+#
 #{
 #    "LastName" : "Rizal",
 #	"FirstName" : "Jose",
-#	"UserName" : "JRizal",
+#    "UserName" : "JRizal",
 #	"Password" : "n0l1!"
 #}
 
 #POST http://localhost:8080/login
-#
+
 #{
 #    "UserName" : "JRizal",
 #    "Password" : "n0l1!"
@@ -39,6 +40,10 @@
 #    "Status":"to be watched"
 #}
 
+#GET http://localhost:8080/movies
+
+#POST http://localhost:8080/logout
+
 #POST http://localhost:8080/movies/?Id=6
 #
 #{
@@ -53,7 +58,7 @@
 
 #DELETE http://localhost:8080/movies
 
-POST http://localhost:8080/movies/?Id=7
+#POST http://localhost:8080/movies/?Id=7
 
 #GET http://localhost:8080/movies/?Id=7
 

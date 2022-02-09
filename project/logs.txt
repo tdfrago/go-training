@@ -49,3 +49,14 @@ INFO: 2022/02/09 00:26:53 main.go:171: JRizal entered login details
 INFO: 2022/02/09 00:26:53 main.go:202: JRizal has logged in
 INFO: 2022/02/09 00:27:01 main.go:308: JRizal is currently logged in
 INFO: 2022/02/09 00:27:01 main.go:404: JRizal successfully retrieved the movie watchlist
+INFO: 2022/02/09 05:51:06 main.go:88: JRizal entered signup details
+WARNING: 2022/02/09 05:51:06 main.go:96: JRizal already exists
+INFO: 2022/02/09 05:51:20 main.go:171: JRizal entered login details
+INFO: 2022/02/09 05:51:20 main.go:202: JRizal has logged in
+INFO: 2022/02/09 05:51:29 main.go:308: JRizal is currently logged in
+INFO: 2022/02/09 05:51:29 main.go:404: JRizal successfully retrieved the movie watchlist
+INFO: 2022/02/09 05:51:48 main.go:436: JRizal is currently logged in
+INFO: 2022/02/09 05:51:48 main.go:446: JRizal did not find the movie
+INFO: 2022/02/09 05:51:55 main.go:273: user has logged out
+WARNING: 2022/02/09 05:52:00 main.go:431: user not logged in
+INFO: 2022/02/09 05:59:28 main.go:236: viewing home page
