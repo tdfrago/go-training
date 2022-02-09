@@ -27,12 +27,14 @@ This webapp allows a user to make his/her own movie watchlist. A user can signup
 | PUT      | 405 (Not allowed) | 405 (Not allowed) | 405 (Not allowed) |
 | DELETE   | 405 (Not allowed) | 405 (Not allowed) | 405 (Not allowed) | 
 
+
 | HTTP Verb | Movie watchlist /movies  | Specific movie /movies/?Id={id} |
 |-----------|------------|----------------|
 | POST      | 201 (Created), creates movie entry; movie already created  | 405 (Not allowed) |
 | GET       | 200 (OK), retrieves movie watchlist | 200 (OK), retrieves movie; 404 (Not found) |
 | PUT      | 405 (Not allowed) | 200 (OK), updates movie entry; 404 (Not found) |
 | DELETE   | 405 (Not allowed) | 200 (OK), removes movie entry; 404 (Not found) | 
+
 
 *USERS TABLE*
 
@@ -43,6 +45,7 @@ This webapp allows a user to make his/her own movie watchlist. A user can signup
 | FirstName | string    | First name  |
 | UserName | string  | Username |
 | Password | string | Password (hash)|
+
 
 *MOVIES TABLE*
 
