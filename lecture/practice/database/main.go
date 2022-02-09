@@ -31,7 +31,9 @@ func main() {
 	}
 	defer db.Close()
 
+	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/productsearch", productSearchHandler)
+	http.HandleFunc("/productsearch2", productSearchHandler2)
 	http.ListenAndServe("localhost:8080", nil)
 	/*
 		err = db.Ping()
@@ -47,6 +49,10 @@ func main() {
 		defer insert.Close()
 		fmt.Println("Successful Connection to Database")
 	*/
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Home")
 }
 
 func productSearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -66,12 +72,15 @@ func productSearchHandler(w http.ResponseWriter, r *http.Request) {
 	err := row.Scan(&P.ID, &P.Name, &P.Price, &P.Description)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			tpl.ExecuteTemplate(w, "notfound.html", nil)
+			fmt.Fprintln(w, "Not found")
 		} else {
 			log.Fatal(err)
 		}
 	} else {
 		tpl.ExecuteTemplate(w, "productsearch.html", P)
 	}
+}
+
+func productSearchHandler2(w http.ResponseWriter, r *http.Request) {
 
 }

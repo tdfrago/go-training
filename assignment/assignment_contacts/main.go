@@ -100,7 +100,7 @@ func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	//GET retrieves the record of the specified ID
-	//if ID not in database, the returns 404 Not found status
+	//if ID not in database, then returns 404 Not found status
 	case "GET":
 		for _, record := range db.recs {
 			if id == record.ID {
@@ -113,7 +113,7 @@ func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 		}
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	//PUT retrieves the record of the specified ID, and updates the record based on the record update
-	//if ID not in database, the returns 404 Not found status
+	//if ID not in database, then returns 404 Not found status
 	case "PUT":
 		for _, record := range db.recs {
 			if id == record.ID {
@@ -148,7 +148,7 @@ func (db *Database) processID(id int, w http.ResponseWriter, r *http.Request) {
 		}
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	//DELETE deletes the record of the specified ID on the database
-	//if ID not in database, the returns 404 Not found status
+	//if ID not in database, then returns 404 Not found status
 	case "DELETE":
 		for j, record := range db.recs {
 			if id == record.ID {
