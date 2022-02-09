@@ -1,4 +1,4 @@
-CREATE TABLE `testdb`.`users` (
+CREATE TABLE `users` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `LastName` VARCHAR(45) NOT NULL,
   `FirstName` VARCHAR(45) NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE `testdb`.`users` (
   `Password` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`Id`));
 
-CREATE TABLE `testdb`.`movies` (
+CREATE TABLE `movies` (
   `Id` INT NOT NULL AUTO_INCREMENT,
   `Title` VARCHAR(45) NOT NULL,
   `Genre` VARCHAR(45) NOT NULL,
@@ -17,5 +17,3 @@ CREATE TABLE `testdb`.`movies` (
   `Status` VARCHAR(100) NOT NULL,
   `UserName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`));
-
-  SELECT Id FROM testdb.movies WHERE UserName = ? AND Title = ? AND Genre = ? AND Year = ? AND Director = ? AND Language = ? AND Country= ?;

@@ -1,0 +1,51 @@
+INFO: 2022/02/09 00:17:45 main.go:171: JRizal entered login details
+WARNING: 2022/02/09 00:17:45 main.go:180: JRizal not found
+INFO: 2022/02/09 00:18:15 main.go:88: JRizal entered signup details
+INFO: 2022/02/09 00:18:15 main.go:101: JRizal username does not yet exist
+INFO: 2022/02/09 00:18:15 main.go:114: JRizal password converted to hash
+INFO: 2022/02/09 00:18:15 main.go:134: JRizal account has been succesfully created
+INFO: 2022/02/09 00:18:48 main.go:171: JRizal entered login details
+INFO: 2022/02/09 00:18:48 main.go:202: JRizal has logged in
+INFO: 2022/02/09 00:19:17 main.go:308: JRizal is currently logged in
+INFO: 2022/02/09 00:19:17 main.go:329: JRizal entered movie input
+INFO: 2022/02/09 00:19:18 main.go:367: JRizal successfully added the move
+WARNING: 2022/02/09 00:19:45 main.go:304: user not logged in
+INFO: 2022/02/09 00:20:03 main.go:308: JRizal is currently logged in
+INFO: 2022/02/09 00:20:03 main.go:329: JRizal entered movie input
+INFO: 2022/02/09 00:20:03 main.go:367: JRizal successfully added the move
+INFO: 2022/02/09 00:20:37 main.go:308: JRizal is currently logged in
+INFO: 2022/02/09 00:20:37 main.go:404: JRizal successfully retrieved the movie watchlist
+INFO: 2022/02/09 00:20:54 main.go:236: viewing home page
+INFO: 2022/02/09 00:21:18 main.go:88: JRizal entered signup details
+WARNING: 2022/02/09 00:21:18 main.go:96: JRizal already exists
+INFO: 2022/02/09 00:21:43 main.go:88: JJozal entered signup details
+INFO: 2022/02/09 00:21:43 main.go:101: JJozal username does not yet exist
+INFO: 2022/02/09 00:21:43 main.go:114: JJozal password converted to hash
+INFO: 2022/02/09 00:21:43 main.go:134: JJozal account has been succesfully created
+INFO: 2022/02/09 00:21:53 main.go:171: JJozal entered login details
+INFO: 2022/02/09 00:21:53 main.go:202: JJozal has logged in
+WARNING: 2022/02/09 00:22:02 main.go:226: incorrect url
+INFO: 2022/02/09 00:22:10 main.go:308: JJozal is currently logged in
+INFO: 2022/02/09 00:22:10 main.go:404: JJozal successfully retrieved the movie watchlist
+INFO: 2022/02/09 00:22:51 main.go:308: JJozal is currently logged in
+INFO: 2022/02/09 00:22:51 main.go:404: JJozal successfully retrieved the movie watchlist
+INFO: 2022/02/09 00:23:08 main.go:308: JJozal is currently logged in
+INFO: 2022/02/09 00:23:08 main.go:329: JJozal entered movie input
+INFO: 2022/02/09 00:23:08 main.go:367: JJozal successfully added the move
+INFO: 2022/02/09 00:23:12 main.go:308: JJozal is currently logged in
+INFO: 2022/02/09 00:23:12 main.go:404: JJozal successfully retrieved the movie watchlist
+INFO: 2022/02/09 00:23:59 main.go:273: user has logged out
+INFO: 2022/02/09 00:24:07 main.go:308: JJozal is currently logged in
+INFO: 2022/02/09 00:24:07 main.go:404: JJozal successfully retrieved the movie watchlist
+INFO: 2022/02/09 00:24:44 main.go:436: JJozal is currently logged in
+INFO: 2022/02/09 00:24:44 main.go:517: JJozal updated the movie
+INFO: 2022/02/09 00:24:49 main.go:436: JJozal is currently logged in
+INFO: 2022/02/09 00:24:49 main.go:464: JJozal successfully retrieved the movie
+INFO: 2022/02/09 00:24:58 main.go:273: user has logged out
+WARNING: 2022/02/09 00:25:07 main.go:304: user not logged in
+WARNING: 2022/02/09 00:25:23 main.go:304: user not logged in
+WARNING: 2022/02/09 00:26:49 main.go:210: status method not allowed
+INFO: 2022/02/09 00:26:53 main.go:171: JRizal entered login details
+INFO: 2022/02/09 00:26:53 main.go:202: JRizal has logged in
+INFO: 2022/02/09 00:27:01 main.go:308: JRizal is currently logged in
+INFO: 2022/02/09 00:27:01 main.go:404: JRizal successfully retrieved the movie watchlist

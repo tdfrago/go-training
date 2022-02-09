@@ -1,5 +1,5 @@
 
-#POST http://localhost:8080/signup?lastname=Go&firstname=Ty&username=TyGo&password=password
+#POST http://localhost:8080/signup
 
 #{
 #    "LastName" : "Rizal",
@@ -15,14 +15,6 @@
 #    "Password" : "n0l1!"
 #}
 
-#POST http://localhost:8080/
-#POST http://localhost:8080/logout
-
-DELETE http://localhost:8080/movies/?Id=5
-
-#GET http://localhost:8080/movies
-
-
 #POST http://localhost:8080/movies
 
 #{
@@ -35,3 +27,42 @@ DELETE http://localhost:8080/movies/?Id=5
 #    "Status":"watched"
 #}
 
+#POST http://localhost:8080/movies
+#
+#{
+#    "Title" : "Encanto",
+#    "Genre" : "Animated",
+#    "Year" : 2021,
+#    "Director":"Jared Bush",
+#    "Language":"English",
+#    "Country":"US",
+#    "Status":"to be watched"
+#}
+
+#POST http://localhost:8080/movies/?Id=6
+#
+#{
+#    "Year" : 2008,
+#    "Country" : "Philippines",
+#    "Status": "On going"
+#}
+
+#GET http://localhost:8080/movies
+
+#PUT http://localhost:8080/movies
+
+#DELETE http://localhost:8080/movies
+
+POST http://localhost:8080/movies/?Id=7
+
+#GET http://localhost:8080/movies/?Id=7
+
+#PUT http://localhost:8080/movies/?Id=8
+#
+#{
+#    "Country":"United States"
+#}
+
+#DELETE http://localhost:8080/movies/?Id=7
+
+#POST http://localhost:8080/logout
