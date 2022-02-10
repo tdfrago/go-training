@@ -60,3 +60,107 @@ INFO: 2022/02/09 05:51:48 main.go:446: JRizal did not find the movie
 INFO: 2022/02/09 05:51:55 main.go:273: user has logged out
 WARNING: 2022/02/09 05:52:00 main.go:431: user not logged in
 INFO: 2022/02/09 05:59:28 main.go:236: viewing home page
+INFO: 2022/02/09 21:07:40 main.go:236: viewing home page
+INFO: 2022/02/09 21:14:10 main.go:236: viewing home page
+INFO: 2022/02/09 21:15:12 main.go:88: JDoe entered signup details
+INFO: 2022/02/09 21:15:12 main.go:101: JDoe username does not yet exist
+INFO: 2022/02/09 21:15:12 main.go:114: JDoe password converted to hash
+INFO: 2022/02/09 21:15:12 main.go:134: JDoe account has been succesfully created
+INFO: 2022/02/09 21:18:37 main.go:236: viewing home page
+INFO: 2022/02/09 21:19:12 main.go:88: JDoe entered signup details
+WARNING: 2022/02/09 21:19:12 main.go:96: JDoe already exists
+INFO: 2022/02/09 21:27:36 main.go:236: viewing home page
+INFO: 2022/02/09 21:28:06 main.go:88: JOed entered signup details
+INFO: 2022/02/09 21:28:06 main.go:101: JOed username does not yet exist
+INFO: 2022/02/09 21:28:06 main.go:114: JOed password converted to hash
+INFO: 2022/02/09 21:28:06 main.go:134: JOed account has been succesfully created
+INFO: 2022/02/09 21:35:36 main.go:236: viewing home page
+INFO: 2022/02/09 21:40:52 main.go:236: viewing home page
+INFO: 2022/02/09 21:41:44 main.go:88: JohnDoc entered signup details
+INFO: 2022/02/09 21:41:44 main.go:101: JohnDoc username does not yet exist
+INFO: 2022/02/09 21:41:44 main.go:114: JohnDoc password converted to hash
+INFO: 2022/02/09 21:41:44 main.go:134: JohnDoc account has been succesfully created
+INFO: 2022/02/09 21:45:04 main.go:88: JohnDoc entered signup details
+WARNING: 2022/02/09 21:45:04 main.go:96: JohnDoc already exists
+INFO: 2022/02/09 21:45:14 main.go:88: JohnDoc entered signup details
+WARNING: 2022/02/09 21:45:14 main.go:96: JohnDoc already exists
+INFO: 2022/02/09 21:45:32 main.go:88: JohnDoc entered signup details
+WARNING: 2022/02/09 21:45:32 main.go:96: JohnDoc already exists
+INFO: 2022/02/09 21:45:50 main.go:88: JohnDoc entered signup details
+WARNING: 2022/02/09 21:45:50 main.go:96: JohnDoc already exists
+INFO: 2022/02/09 21:50:20 main.go:236: viewing home page
+INFO: 2022/02/09 21:50:52 main.go:88: BobDude entered signup details
+INFO: 2022/02/09 21:50:52 main.go:101: BobDude username does not yet exist
+INFO: 2022/02/09 21:50:52 main.go:114: BobDude password converted to hash
+INFO: 2022/02/09 21:50:52 main.go:134: BobDude account has been succesfully created
+INFO: 2022/02/09 21:52:31 main.go:88: BobDude entered signup details
+WARNING: 2022/02/09 21:52:31 main.go:96: BobDude already exists
+INFO: 2022/02/09 21:53:10 main.go:171: BobDude entered login details
+INFO: 2022/02/09 21:53:10 main.go:202: BobDude has logged in
+INFO: 2022/02/09 21:54:06 main.go:308: BobDude is currently logged in
+INFO: 2022/02/09 21:54:06 main.go:329: BobDude entered movie input
+INFO: 2022/02/09 21:54:06 main.go:367: BobDude successfully added the move
+INFO: 2022/02/09 21:54:35 main.go:308: BobDude is currently logged in
+INFO: 2022/02/09 21:54:35 main.go:329: BobDude entered movie input
+INFO: 2022/02/09 21:54:35 main.go:367: BobDude successfully added the move
+INFO: 2022/02/09 21:55:09 main.go:308: BobDude is currently logged in
+INFO: 2022/02/09 21:55:09 main.go:404: BobDude successfully retrieved the movie watchlist
+INFO: 2022/02/09 21:55:47 main.go:308: BobDude is currently logged in
+INFO: 2022/02/09 21:55:47 main.go:404: BobDude successfully retrieved the movie watchlist
+INFO: 2022/02/09 21:56:25 main.go:308: BobDude is currently logged in
+INFO: 2022/02/09 21:56:25 main.go:404: BobDude successfully retrieved the movie watchlist
+INFO: 2022/02/09 21:56:58 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 21:56:58 main.go:464: BobDude successfully retrieved the movie
+INFO: 2022/02/09 21:57:51 main.go:436: BobDude is currently logged in
+WARNING: 2022/02/09 21:57:51 main.go:453: status method not allowed
+INFO: 2022/02/09 22:28:37 main.go:171: BobDude entered login details
+WARNING: 2022/02/09 22:28:37 main.go:194: BobDude already logged in
+INFO: 2022/02/09 22:28:54 main.go:273: user has logged out
+INFO: 2022/02/09 22:29:19 main.go:171: BobDude entered login details
+INFO: 2022/02/09 22:29:19 main.go:202: BobDude has logged in
+INFO: 2022/02/09 22:32:24 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:32:24 main.go:464: BobDude successfully retrieved the movie
+INFO: 2022/02/09 22:33:08 main.go:273: user has logged out
+INFO: 2022/02/09 22:33:36 main.go:171: BobDude entered login details
+INFO: 2022/02/09 22:33:37 main.go:202: BobDude has logged in
+INFO: 2022/02/09 22:35:33 main.go:308: BobDude is currently logged in
+INFO: 2022/02/09 22:35:33 main.go:404: BobDude successfully retrieved the movie watchlist
+INFO: 2022/02/09 22:36:18 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:36:18 main.go:464: BobDude successfully retrieved the movie
+INFO: 2022/02/09 22:39:10 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:39:10 main.go:517: BobDude updated the movie
+INFO: 2022/02/09 22:39:52 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:39:52 main.go:446: BobDude did not find the movie
+INFO: 2022/02/09 22:40:43 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:40:43 main.go:517: BobDude updated the movie
+INFO: 2022/02/09 22:41:18 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:41:18 main.go:464: BobDude successfully retrieved the movie
+INFO: 2022/02/09 22:42:57 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:42:57 main.go:517: BobDude updated the movie
+INFO: 2022/02/09 22:43:28 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:43:28 main.go:464: BobDude successfully retrieved the movie
+INFO: 2022/02/09 22:44:12 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:44:13 main.go:541: BobDude deleted the movie
+INFO: 2022/02/09 22:44:34 main.go:436: BobDude is currently logged in
+INFO: 2022/02/09 22:44:34 main.go:446: BobDude did not find the movie
+INFO: 2022/02/09 22:45:08 main.go:273: user has logged out
+INFO: 2022/02/09 22:47:44 main.go:171: JDoe entered login details
+INFO: 2022/02/09 22:47:44 main.go:202: JDoe has logged in
+INFO: 2022/02/09 22:48:31 main.go:308: JDoe is currently logged in
+INFO: 2022/02/09 22:48:31 main.go:329: JDoe entered movie input
+INFO: 2022/02/09 22:48:31 main.go:367: JDoe successfully added the move
+INFO: 2022/02/09 22:48:54 main.go:308: JDoe is currently logged in
+INFO: 2022/02/09 22:48:54 main.go:329: JDoe entered movie input
+INFO: 2022/02/09 22:48:54 main.go:367: JDoe successfully added the move
+INFO: 2022/02/09 22:49:36 main.go:308: JDoe is currently logged in
+INFO: 2022/02/09 22:49:36 main.go:404: JDoe successfully retrieved the movie watchlist
+INFO: 2022/02/09 22:50:28 main.go:436: JDoe is currently logged in
+INFO: 2022/02/09 22:50:28 main.go:464: JDoe successfully retrieved the movie
+INFO: 2022/02/09 22:51:25 main.go:436: JDoe is currently logged in
+INFO: 2022/02/09 22:51:25 main.go:517: JDoe updated the movie
+INFO: 2022/02/09 22:51:40 main.go:436: JDoe is currently logged in
+INFO: 2022/02/09 22:51:40 main.go:464: JDoe successfully retrieved the movie
+INFO: 2022/02/09 22:51:59 main.go:436: JDoe is currently logged in
+INFO: 2022/02/09 22:51:59 main.go:541: JDoe deleted the movie
+INFO: 2022/02/09 22:52:12 main.go:308: JDoe is currently logged in
+INFO: 2022/02/09 22:52:12 main.go:404: JDoe successfully retrieved the movie watchlist
