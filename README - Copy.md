@@ -21,7 +21,7 @@ This initiative aims to enhance the model under ERST’s Integrated Risk and Cap
 
 4. Updated Data folder - results of Data Cleaning (this data is used for the R files and modelling proper)
 
-## R Files
+### R Files
 5. 03ModelLAG1 Business Process Execution Failures.R
 6. 03ModelLAG1 Employment Practices and Workplace Safety.R
 7. 03ModelLAG1 External Theft and Fraud.R
@@ -29,7 +29,7 @@ This initiative aims to enhance the model under ERST’s Integrated Risk and Cap
 9. 03ModelLAG1 Third Party Failures and Damages.R
 10. 03ModelLAG1 Trade Counterparty, Third Party Failures and Damages.R
 
-## Python Notebooks
+### Python Notebooks
 11. Data Cleaning.ipynb - data cleaning of Data Folder, and Updated Data Folder
 12. EDA.ipynb - Plot of data for EDA
 13. Modelling Proper.ipynb - modelling of regression models
